@@ -3,14 +3,15 @@ import { DataGrid } from "@mui/x-data-grid";
 
 const UserTable = ({ users, deleteUser, handelEdit }) => {
   const columns = [
-    { field: "name", headerName: "Name", width: 100 },
-    { field: "email", headerName: "Email", width: 150 },
-    { field: "mobile", headerName: "Mobile", width: 150 },
-    { field: "dateOfBirth", headerName: "Date Of Birth", width: 150 },
+    { field: "name", headerName: "Name", width: 200, flex: 1 },
+    { field: "email", headerName: "Email", width: 200, flex: 1 },
+    { field: "mobile", headerName: "Mobile", width: 200, flex: 1 },
+    { field: "dateOfBirth", headerName: "Date Of Birth", width: 200, flex: 1 },
     {
       field: "action",
       headerName: "Action",
-      with: 100,
+      width: 200,
+      flex: 1,
       renderCell: (record) => {
         return (
           <Box>
@@ -36,7 +37,7 @@ const UserTable = ({ users, deleteUser, handelEdit }) => {
     },
   ];
   return (
-    <Box sx={{ width: "900px" }}>
+    <Box>
       <div style={{ height: 300, width: "100%" }}>
         <DataGrid rows={users} columns={columns} />
       </div>

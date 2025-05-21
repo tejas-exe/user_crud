@@ -74,7 +74,14 @@ const UserModal = ({ handleClose, open, submit, seleCtedCellValue }) => {
             <div style={inputDiv}>
               <label>Email</label>
               <input
-                {...register("email", { required: "email is required" })}
+                {...register("email", {
+                  required: "email is required",
+                  validate: (value) => {
+                    if (!value.includes("@")) {
+                      return "Invalid email address";
+                    }
+                  },
+                })}
                 placeholder="Enter Your Email"
               />
               <p style={{ color: "red" }}>{errors.email?.message}</p>

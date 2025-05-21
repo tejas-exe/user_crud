@@ -4,39 +4,54 @@ import UserTable from "./components/UserTable";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import UserModal from "./components/UserModal";
+import ConfirmationModal from "./components/ConfirmationModal";
 
 function App() {
+  const baseUrl = "http://localhost:5000/user/v1";
   const [userResp, setUserResp] = useState({});
   const [editResp, setEditResp] = useState({});
   const [openAddModel, setOpenAddModel] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+
+  const resetState = () => {
+    setEditResp({});
+    setOpenAddModel(false);
+    setIsEdit(false);
+    setOpenDeleteModal(false);
+    setDeleteId("");
+  };
 
   // API CALLS
   const fetchData = async () => {
-    const users = await axios.get("http://localhost:5000/user/v1/getUser");
+    const users = await axios.get(`${baseUrl}/getUser`);
     setUserResp(users.data);
+  };
+  // Delete user state management
+  const handelDeleteConfirmation = (id) => {
+    setOpenDeleteModal(true);
+    setDeleteId(id);
   };
   // Delete user
   const deleteUser = async (id) => {
-    await axios.delete(`http://localhost:5000/user/v1/deleteUser/${id}`);
+    await axios.delete(`${baseUrl}/deleteUser/${id}`);
     await fetchData();
+    resetState();
   };
-  // Add User
+
+  // Add User and Edit User
   const handelSubmit = async (data) => {
     if (!isEdit) {
-      await axios.post(`http://localhost:5000/user/v1/createUser`, data);
+      await axios.post(`${baseUrl}/createUser`, data);
     } else {
-      await axios.put(
-        `http://localhost:5000/user/v1/editUser/${editResp._id}`,
-        data
-      );
+      await axios.put(`${baseUrl}/editUser/${editResp._id}`, data);
     }
-    setEditResp({});
     await fetchData();
-    setOpenAddModel(false);
-    setIsEdit(false);
+    resetState();
   };
-  // Edit
+
+  // Edit state management
   const handelEdit = (data) => {
     setEditResp(data);
     setIsEdit(true);
@@ -62,7 +77,7 @@ function App() {
       </Button>
       <UserTable
         users={userRow}
-        deleteUser={deleteUser}
+        deleteUser={handelDeleteConfirmation}
         handelEdit={handelEdit}
       />
       <UserModal
@@ -72,6 +87,13 @@ function App() {
         }}
         submit={handelSubmit}
         seleCtedCellValue={editResp}
+      />
+      <ConfirmationModal
+        open={openDeleteModal}
+        handleClose={() => {
+          setOpenDeleteModal(false);
+        }}
+        handleDelete={() => deleteUser(deleteId)}
       />
     </Box>
   );
